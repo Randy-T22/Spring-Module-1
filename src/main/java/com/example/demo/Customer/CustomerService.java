@@ -23,25 +23,25 @@ public class CustomerService {
     }
 
     public void addNewCustomer(Customer customer) {
-        Optional<Customer> customerBySSN = customerRepository.findCustomerBySSN((int) customer.getSSN());
-        if(customerBySSN.isPresent()){
+        Optional<Customer> newCustomer = customerRepository.getNames(customer.getName());
+        if(newCustomer.isPresent()){
             throw new IllegalStateException("Customer already in database.");
         }
         customerRepository.save(customer);
     }
 
     public void deleteCustomer(Long id) {
-        boolean exists = customerRepository.existsById(Math.toIntExact(id));
+        boolean exists = customerRepository.existsById(id);
         if (!exists) {
             throw new IllegalStateException("Customer with id " + id + " does not exist");
         }
-        customerRepository.deleteById(Math.toIntExact(id));
+        customerRepository.deleteById(id);
     }
 
     @Transactional
     public void updateCustomer(Long id,
                               String name) {
-        Customer customer = customerRepository.findById(Math.toIntExact(id)).orElseThrow(() -> new IllegalStateException("student with id " + id + " does not exist"));
+        Customer customer = customerRepository.findById(id).orElseThrow(() -> new IllegalStateException("student with id " + id + " does not exist"));
         if (name != null &&
                 name.length() > 0 &&
                 !Objects.equals(customer.getName(), name)) {
@@ -50,6 +50,6 @@ public class CustomerService {
     }
 
     public Optional<Customer> getUserById(Long id) {
-        return customerRepository.findById(Math.toIntExact(id));
+        return customerRepository.findById(id);
     }
 }
